@@ -1,198 +1,130 @@
-// ContentView.swift
 import SwiftUI
 import AVKit
-import ReplayKit
-import ScriptingBridge
-
-//struct ContentView: View {
-//    @State private var isRecording = false
-//    @State private var videoURL: URL?
-//
-//    let quickTime = SBApplication(bundleIdentifier: "com.apple.QuickTimePlayerX")
-//
-//    var body: some View {
-//        VStack {
-//            Button(action: {
-//                if !isRecording {
-//                    self.startRecording()
-//                } else {
-//                    Task {
-//                        await self.stopRecording()
-//                    }
-//                }
-//            }) {
-//                Text(isRecording ? "Stop Recording" : "Start Recording")
-//            }
-//
-//            if let videoURL = videoURL {
-//                VideoPlayer(player: AVPlayer(url: videoURL))
-//                    .frame(height: 300)
-//            }
-//        }
-//    }
-//
-//    func startRecording() {
-//        if let quickTime = quickTime {
-//            let document = quickTime.class(forScriptingClass: "screen_recording")?.alloc() as? SBObject
-//            if let document = document {
-//                document.setValue(true, forKey: "entireScreen")
-//                document.setValue(true, forKey: "recording")
-//                isRecording = true
-//            }
-//        }
-//    }
-//
-//    func stopRecording() async {
-//        if let quickTime = quickTime {
-//            let document = quickTime.class(forScriptingClass: "screen_recording")?.alloc() as? SBObject
-//            if let document = document {
-//                document.setValue(false, forKey: "recording")
-//                isRecording = false
-//                if let url = document.value(forKey: "outputFile") as? URL {
-//                    videoURL = url
-//                }
-//            }
-//        }
-//    }
-//}
+import AVFoundation
 
 struct ContentView: View {
+    @StateObject private var screenRecorder = ScreenCapture()
+    @State private var player = AVPlayer()
     @State private var isRecording = false
-    @State private var videoURL: URL?
-
-    let screenRecorder = ScreenRecorder()
+    @State private var currentFilePath: String = ""
 
     var body: some View {
-        VStack {
-            Button(action: {
-                if !isRecording {
-                    self.startRecording()
-                } else {
-                    Task {
-                        await self.stopRecording()
-                    }
+        GeometryReader { geometry in
+            VStack {
+                Button(isRecording ? "Stop Recording" : "Start Recording") {
+                    toggleRecording()
                 }
-            }) {
-                Text(isRecording ? "Stop Recording" : "Start Recording")
-            }
+                .padding()
 
-            if let videoURL = videoURL {
-                VideoPlayer(player: AVPlayer(url: videoURL))
-                    .frame(height: 300)
+                Spacer()
+
+                VideoPlayer(player: player)
+                    .frame(width: geometry.size.width * 0.5) // Use 50% of the view's width
+                    .aspectRatio(16/9, contentMode: .fit)
+                    .onAppear {
+                        player.play()  // Ensure playback starts when the view appears
+                    }
+
+                Spacer()
             }
+        }
+        .onAppear {
+            screenRecorder.setupCaptureSession()
         }
     }
 
-    func startRecording() {
-        screenRecorder.startRecording { error in
-            if let error = error {
-                print("Error starting recording: \(error.localizedDescription)")
-            } else {
-                print("Recording started successfully")
-                self.isRecording = true
+    /// Toggles the recording state and handles file operations.
+    private func toggleRecording() {
+        if isRecording {
+            // Stop recording
+            screenRecorder.stopRecording()
+            isRecording = false
+
+            // Wait for a bit before trying to play the video
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                setupPlayer()
             }
+        } else {
+            // Start recording
+            let filePath = generateFilePath()
+            currentFilePath = filePath
+            screenRecorder.startRecording(to: filePath)
+            isRecording = true
         }
     }
 
-    func stopRecording() async {
-        do {
-            let url = try await screenRecorder.stopRecording()
-            self.videoURL = url
-            self.isRecording = false
-        } catch {
-            print("Error stopping recording: \(error.localizedDescription)")
+    /// Sets up the player with the current file path.
+    private func setupPlayer() {
+        let fileURL = URL(fileURLWithPath: currentFilePath)
+        if FileManager.default.fileExists(atPath: currentFilePath) {
+            let playerItem = AVPlayerItem(url: fileURL)
+            player.replaceCurrentItem(with: playerItem)
+        } else {
+            print("File does not exist at the path: \(currentFilePath)")
         }
     }
 
-    class ScreenRecorder {
-        let recorder = RPScreenRecorder.shared()
-
-        func startRecording(enableMicrophone: Bool = false, completion: @escaping (Error?) -> ()) {
-            recorder.isMicrophoneEnabled = enableMicrophone
-            recorder.startRecording(handler: completion)
-        }
-
-        func stopRecording() async throws -> URL {
-            let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString + ".mov")
-            try await recorder.stopRecording(withOutput: url)
-            return url
-        }
+    /// Generates a file path for the video with a timestamp.
+    private func generateFilePath() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyyMMdd_HHmmss"
+        let dateString = dateFormatter.string(from: Date())
+        let desktopPath = NSSearchPathForDirectoriesInDomains(.desktopDirectory, .userDomainMask, true).first!
+        return "\(desktopPath)/recordedVideo_\(dateString).mov"
     }
 }
 
-#Preview {
-    ContentView()
+
+class ScreenCapture: NSObject, ObservableObject, AVCaptureFileOutputRecordingDelegate {
+    private var captureSession: AVCaptureSession?
+    private var movieOutput: AVCaptureMovieFileOutput?
+    private var activeInput: AVCaptureScreenInput?
+    
+    func setupCaptureSession() {
+        let session = AVCaptureSession()
+        session.sessionPreset = .high
+        
+        if let screen = NSScreen.main {
+            if let displayID = screen.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? CGDirectDisplayID {
+                let screenInput = AVCaptureScreenInput(displayID: displayID)
+                screenInput?.capturesCursor = false
+                
+                if let screenInput = screenInput, session.canAddInput(screenInput) {
+                    session.addInput(screenInput)
+                    activeInput = screenInput
+                } else {
+                    print("Failed to create AVCaptureScreenInput")
+                }
+            }
+        }
+        
+        let output = AVCaptureMovieFileOutput()
+        if session.canAddOutput(output) {
+            session.addOutput(output)
+            movieOutput = output
+        }
+        
+        captureSession = session
+    }
+    
+    func startRecording(to path: String) {
+        guard let captureSession = captureSession, !captureSession.isRunning else { return }
+        captureSession.startRunning()
+        
+        let outputFileURL = URL(fileURLWithPath: path)
+        movieOutput?.startRecording(to: outputFileURL, recordingDelegate: self)
+    }
+    
+    func stopRecording() {
+        movieOutput?.stopRecording()
+    }
+    
+    func fileOutput(_ output: AVCaptureFileOutput, didStartRecordingTo fileURL: URL, from connections: [AVCaptureConnection]) {
+        print("Recording started")
+    }
+    
+    func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: Error?) {
+        print("Recording finished: \(error?.localizedDescription ?? "Success")")
+        captureSession?.stopRunning()
+    }
 }
-
-//struct ContentView: View {
-//    @State var text = "New texttt"
-//    @State var image = NSImage()
-//    @State var videoURL: URL?
-//    let recorder = RPScreenRecorder.shared()
-//
-//    var body: some View {
-//        NavigationView {
-//            VStack(alignment: .center) {
-//                Button("Basic Button") {
-//                    text = "Start Recording"
-//                    recorder.startRecording()
-//                }
-//                Button("Stop Recording") {
-//                    text = "Stop Recording"
-//                    recorder.stopRecording { (previewViewController, error) in
-//                        if let error = error {
-//                            print("Error: \(error)")
-//                        }
-//                        if let previewViewController = previewViewController {
-//                            previewViewController.previewControllerDelegate = self
-//                            self.present(previewViewController, animated: true, completion: nil)
-//                        }
-//                    }
-//                }
-//                Spacer()
-//            }
-//            .padding()
-//            .frame(width: nil)
-//            .navigationTitle("Hello World")
-//
-//            VStack(alignment: .center) {
-//                Text(text)
-//                // Show the video
-//                if let videoURL = videoURL {
-//                    VideoPlayerView(videoURL: videoURL)
-//                }
-//            }
-//        }
-//    }
-//}
-//
-//struct VideoPlayerView: View {
-//    var videoURL: URL
-//
-//    var body: some View {
-//        VideoPlayer(player: AVPlayer(url: videoURL))
-//            .edgesIgnoringSafeArea(.all)
-//    }
-//}
-
-//     func screenShotWindow() -> Bool {
-//         // Use "/usr/sbin/screencapture", arguments: ["-cw"])
-//         let task = Process()
-//         task.launchPath = "/usr/sbin/screencapture"
-//         task.arguments = ["-cw"]
-//         task.launch()
-//         task.waitUntilExit()
-//         return task.terminationStatus == 0
-//     }
-
-//     func getImageFromClipboard() -> NSImage {
-//         let pasteboard = NSPasteboard.general
-//         guard pasteboard.canReadObject(forClasses: [NSImage.self], options: nil) else {
-//             return NSImage()
-//         }
-//         guard let image = NSImage(pasteboard: pasteboard) else {
-//             return NSImage()
-//         }
-//         return image
-//     }
-// }
