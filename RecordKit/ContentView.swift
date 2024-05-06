@@ -9,24 +9,17 @@ struct ContentView: View {
     @State private var currentFilePath: String = ""
 
     var body: some View {
-        GeometryReader { geometry in
-            VStack {
-                Button(isRecording ? "Stop Recording" : "Start Recording") {
-                    toggleRecording()
-                }
-                .padding()
-
-                Spacer()
-
-                VideoPlayer(player: player)
-                    .frame(width: geometry.size.width * 0.5) // Use 50% of the view's width
-                    .aspectRatio(16/9, contentMode: .fit)
-                    .onAppear {
-                        player.play()  // Ensure playback starts when the view appears
-                    }
-
-                Spacer()
+        VStack {
+            Button(isRecording ? "Stop Recording" : "Start Recording") {
+                toggleRecording()
             }
+            .padding()
+
+            VideoPlayer(player: player)
+                .frame(width: 300, height: 200)
+                .onAppear {
+                    player.play()  // Try to play when view appears
+                }
         }
         .onAppear {
             screenRecorder.setupCaptureSession()
@@ -58,6 +51,7 @@ struct ContentView: View {
         let fileURL = URL(fileURLWithPath: currentFilePath)
         if FileManager.default.fileExists(atPath: currentFilePath) {
             let playerItem = AVPlayerItem(url: fileURL)
+
             player.replaceCurrentItem(with: playerItem)
         } else {
             print("File does not exist at the path: \(currentFilePath)")
