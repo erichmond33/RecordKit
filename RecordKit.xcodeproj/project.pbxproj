@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9E79F7682BEA42BD00BDAB55 /* FloatingToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E79F7672BEA42BD00BDAB55 /* FloatingToolbar.swift */; };
+		9E79F76A2BEA42F900BDAB55 /* WindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E79F7692BEA42F900BDAB55 /* WindowController.swift */; };
 		9ED37BBB2BE4FFB2006B5C58 /* RecordKitApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ED37BBA2BE4FFB2006B5C58 /* RecordKitApp.swift */; };
 		9ED37BBD2BE4FFB2006B5C58 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ED37BBC2BE4FFB2006B5C58 /* ContentView.swift */; };
 		9ED37BBF2BE4FFB3006B5C58 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9ED37BBE2BE4FFB3006B5C58 /* Assets.xcassets */; };
@@ -15,6 +17,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		9E79F7672BEA42BD00BDAB55 /* FloatingToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingToolbar.swift; sourceTree = "<group>"; };
+		9E79F7692BEA42F900BDAB55 /* WindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowController.swift; sourceTree = "<group>"; };
 		9EA53F712BE93F4E00D273CC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		9ED37BB72BE4FFB2006B5C58 /* RecordKit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RecordKit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9ED37BBA2BE4FFB2006B5C58 /* RecordKitApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordKitApp.swift; sourceTree = "<group>"; };
@@ -58,6 +62,8 @@
 				9EA53F712BE93F4E00D273CC /* Info.plist */,
 				9ED37BBA2BE4FFB2006B5C58 /* RecordKitApp.swift */,
 				9ED37BBC2BE4FFB2006B5C58 /* ContentView.swift */,
+				9E79F7672BEA42BD00BDAB55 /* FloatingToolbar.swift */,
+				9E79F7692BEA42F900BDAB55 /* WindowController.swift */,
 				9ED37BBE2BE4FFB3006B5C58 /* Assets.xcassets */,
 				9ED37BC32BE4FFB3006B5C58 /* RecordKit.entitlements */,
 				9ED37BC02BE4FFB3006B5C58 /* Preview Content */,
@@ -145,8 +151,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				9ED37BBD2BE4FFB2006B5C58 /* ContentView.swift in Sources */,
+				9E79F76A2BEA42F900BDAB55 /* WindowController.swift in Sources */,
 				9ED37BBB2BE4FFB2006B5C58 /* RecordKitApp.swift in Sources */,
 				9ED37BCA2BE5001F006B5C58 /* RecordSetup.swift in Sources */,
+				9E79F7682BEA42BD00BDAB55 /* FloatingToolbar.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

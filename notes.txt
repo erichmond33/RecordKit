@@ -1,3 +1,31 @@
 #Preview {
     ContentView()
 }
+
+
+
+
+                VStack() {
+                    Image(systemName: "macwindow")
+                        .font(.system(size: 30))
+                    Text("hello")
+                        .frame(width: 60)
+                }
+                .padding(5)
+                .background(isHoveringVStack ? Color.blue : Color.clear)
+                .cornerRadius(10)
+                .onHover { hover in
+                    withAnimation(.linear(duration: 1)) {
+                        isHoveringVStack = hover
+                    }
+                }
+            }
+            .buttonStyle(.plain)
+            .popover(isPresented: $isHoveringFullScreen) {
+                Text("Capture the full screen")
+                    .padding(EdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5))
+                    .frame(width: 100)
+            }
+            .onHover { over in
+                isHoveringFullScreen = over
+            }
