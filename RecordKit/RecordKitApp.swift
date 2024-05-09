@@ -15,9 +15,9 @@ struct RecordKitApp: App {
         WindowGroup {
             ContentView()
                 .frame(width: 300, height: 200) // Optional: Adjust the size as needed
-                .onAppear {
-                    setupFloatingToolbar()
-                }
+//                .onAppear {
+//                    setupFloatingToolbar()
+//                }
         }
         .commands {
             // Additional commands can be added here
