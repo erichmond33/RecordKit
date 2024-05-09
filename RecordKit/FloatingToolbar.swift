@@ -98,8 +98,9 @@ struct FloatingToolbar: View {
             Button(action: {
                 print("Capture Full Screen")
             }) {
-                buttonContent(title: "Full Screen", icon: "menubar.dock.rectangle", isHovered: $isHoveringFullScreen)
-            }.buttonStyle(.plain)
+                buttonContent(title: "Display", icon: "menubar.dock.rectangle", isHovered: $isHoveringFullScreen)
+            }
+            .buttonStyle(.plain)
 
             // Button 2: Capture Window
             Button(action: {
@@ -116,8 +117,8 @@ struct FloatingToolbar: View {
             }.buttonStyle(.plain)
         }
         .padding()
-        .background(Color.gray.opacity(0.8))
-        .cornerRadius(25)
+//        .background(Color.red)
+//        .cornerRadius(25)
         .shadow(radius: 10)
     }
 
@@ -125,13 +126,14 @@ struct FloatingToolbar: View {
     private func buttonContent(title: String, icon: String, isHovered: Binding<Bool>) -> some View {
         VStack {
             Image(systemName: icon)
-                .font(.system(size: 45))
+                .font(.system(size: 36))
             Text(title)
                 .font(.system(size: 12))
                 .frame(width: 70)
+                .foregroundColor(Color.white)
         }
         .padding(buttonPadding)
-        .background(isHovered.wrappedValue ? Color.blue : Color.clear)
+        .background(isHovered.wrappedValue ? Color.gray.opacity(0.50) : Color.clear)
         .cornerRadius(cornerRadius)
         .onHover { hover in
             withAnimation(hoverAnimation) {

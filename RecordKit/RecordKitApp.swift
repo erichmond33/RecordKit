@@ -5,21 +5,12 @@
 //  Created by Eli Richmond on 5/3/24.
 //
 
-//import SwiftUI
-//
-//@main
-//struct RecordKitApp: App {
-//    var body: some Scene {
-//        WindowGroup {
-//            ContentView()
-//        }
-//    }
-//}
-
 import SwiftUI
 
 @main
 struct RecordKitApp: App {
+    @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+
     var body: some Scene {
         WindowGroup {
             ContentView()
@@ -37,6 +28,16 @@ struct RecordKitApp: App {
         let windowController = WindowController()
         windowController.showWindow(nil)
         NSApp.activate(ignoringOtherApps: true) // Bring the app to the foreground
+
+        // Hide the main app window
+        if let window = NSApplication.shared.windows.first {
+            window.orderOut(nil)
+        }
     }
 }
 
+class AppDelegate: NSObject, NSApplicationDelegate {
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        // Optional: Perform additional setup here
+    }
+}

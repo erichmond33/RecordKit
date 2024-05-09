@@ -3,9 +3,64 @@ import AVKit
 import AVFoundation
 
 struct ContentView: View {
+    // States to track hover status for each button
+    @State private var isHoveringFullScreen = false
+    @State private var isHoveringWindow = false
+    @State private var isHoveringCustom = false
+
+    // Common UI Settings
+    let buttonPadding: CGFloat = 5
+    let cornerRadius: CGFloat = 10
+    let hoverAnimation: Animation = .snappy(duration: 0.75)
+
     var body: some View {
-        Text("Main app content goes here")
-        // Add other views as needed
+        HStack(spacing: 20) {
+            // Button 1: Capture Full Screen
+            Button(action: {
+                print("Capture Full Screen")
+            }) {
+                buttonContent(title: "Display", icon: "menubar.dock.rectangle", isHovered: $isHoveringFullScreen)
+            }
+            .buttonStyle(.plain)
+
+            // Button 2: Capture Window
+            Button(action: {
+                print("Capture Window")
+            }) {
+                buttonContent(title: "Window", icon: "rectangle.inset.filled", isHovered: $isHoveringWindow)
+            }.buttonStyle(.plain)
+
+            // Button 3: Capture Custom
+            Button(action: {
+                print("Capture Custom")
+            }) {
+                buttonContent(title: "Custom", icon: "rectangle.dashed", isHovered: $isHoveringCustom)
+            }.buttonStyle(.plain)
+        }
+        .padding()
+//        .background(Color.red)
+//        .cornerRadius(25)
+        .shadow(radius: 10)
+    }
+
+    @ViewBuilder
+    private func buttonContent(title: String, icon: String, isHovered: Binding<Bool>) -> some View {
+        VStack {
+            Image(systemName: icon)
+                .font(.system(size: 36))
+            Text(title)
+                .font(.system(size: 12))
+                .frame(width: 70)
+                .foregroundColor(Color.white)
+        }
+        .padding(buttonPadding)
+        .background(isHovered.wrappedValue ? Color.gray.opacity(0.50) : Color.clear)
+        .cornerRadius(cornerRadius)
+        .onHover { hover in
+            withAnimation(hoverAnimation) {
+                isHovered.wrappedValue = hover
+            }
+        }
     }
 }
 
