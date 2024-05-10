@@ -4,5 +4,7 @@
 <dict>
 	<key>NSScreenRecordingUsageDescription</key>
 	<string>Need to screen record</string>
+	<key>NSAppleEventsUsageDescription</key>
+	<string>We need access to capture screen events.</string>
 </dict>
 </plist>

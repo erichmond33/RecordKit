@@ -7,8 +7,9 @@ class ScreenCapture: NSObject, ObservableObject, AVCaptureFileOutputRecordingDel
     private var movieOutput: AVCaptureMovieFileOutput?
     private var activeInput: AVCaptureScreenInput?
     
-    @Published var mousePositions: [CGPoint] = []
-    
+    @Published var clickLocations: [(timestamp: CMTime, location: CGPoint)] = []
+    private var eventMonitor: Any?
+
     func setupCaptureSession(rect: CGRect? = nil) {
         let session = AVCaptureSession()
         session.sessionPreset = .high
@@ -39,9 +40,6 @@ class ScreenCapture: NSObject, ObservableObject, AVCaptureFileOutputRecordingDel
         }
 
         captureSession = session
-
-        // Start capturing mouse positions
-        startMouseTracking()
     }
 
     func startRecording(to path: String) {
@@ -50,6 +48,9 @@ class ScreenCapture: NSObject, ObservableObject, AVCaptureFileOutputRecordingDel
 
         let outputFileURL = URL(fileURLWithPath: path)
         movieOutput?.startRecording(to: outputFileURL, recordingDelegate: self)
+        
+        // Start capturing mouse positions
+        startMouseTracking()
     }
 
     func stopRecording() {
@@ -67,14 +68,25 @@ class ScreenCapture: NSObject, ObservableObject, AVCaptureFileOutputRecordingDel
         // Stop capturing mouse positions
         stopMouseTracking()
     }
-    
+
     private func startMouseTracking() {
-        NSEvent.addGlobalMonitorForEvents(matching: .mouseMoved) { event in
-            self.mousePositions.append(event.locationInWindow)
+        print("Starting mouse tracking...")
+        eventMonitor = NSEvent.addGlobalMonitorForEvents(matching: .leftMouseDown) { event in
+            guard let isRecording = self.movieOutput?.isRecording, isRecording else {
+                print("Not recording at the moment of click")
+                return
+            }
+            let timestamp = CMTime(seconds: CACurrentMediaTime(), preferredTimescale: 1000)
+            self.clickLocations.append((timestamp, event.locationInWindow))
+            print("Click detected at \(timestamp), location: \(event.locationInWindow)")
         }
     }
 
+
     private func stopMouseTracking() {
-        // Implementation to stop tracking if needed
+        if let eventMonitor = eventMonitor {
+            NSEvent.removeMonitor(eventMonitor)
+        }
+        print(self.clickLocations)
     }
 }

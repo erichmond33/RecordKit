@@ -14,7 +14,7 @@ struct RecordKitApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .frame(width: 300, height: 200) // Optional: Adjust the size as needed
+                .frame(width: 800, height: 600) // Optional: Adjust the size as needed
 //                .onAppear {
 //                    setupFloatingToolbar()
 //                }
@@ -39,5 +39,13 @@ struct RecordKitApp: App {
 class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         // Optional: Perform additional setup here
+//        testEventMonitoring()
+    }
+    
+    func testEventMonitoring() {
+        print("Setting up test event monitoring...")
+        NSEvent.addGlobalMonitorForEvents(matching: .leftMouseDown) { event in
+            print("Test click detected at location: \(event.locationInWindow)")
+        }
     }
 }
