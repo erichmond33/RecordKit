@@ -14,6 +14,9 @@
 		9ED37BBF2BE4FFB3006B5C58 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9ED37BBE2BE4FFB3006B5C58 /* Assets.xcassets */; };
 		9ED37BC22BE4FFB3006B5C58 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9ED37BC12BE4FFB3006B5C58 /* Preview Assets.xcassets */; };
 		9ED37BCA2BE5001F006B5C58 /* RecordSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ED37BC92BE5001F006B5C58 /* RecordSetup.swift */; };
+		9EF0D5562BED1A2200145A0C /* ScreenRecorderHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EF0D5552BED1A2200145A0C /* ScreenRecorderHelper.swift */; };
+		9EF0D5582BED1C6A00145A0C /* ScreenCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EF0D5572BED1C6A00145A0C /* ScreenCapture.swift */; };
+		9EF0D55A2BED1CB100145A0C /* VideoPlayerWithCursorOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EF0D5592BED1CB100145A0C /* VideoPlayerWithCursorOverlay.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,6 +30,9 @@
 		9ED37BC12BE4FFB3006B5C58 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		9ED37BC32BE4FFB3006B5C58 /* RecordKit.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RecordKit.entitlements; sourceTree = "<group>"; };
 		9ED37BC92BE5001F006B5C58 /* RecordSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordSetup.swift; sourceTree = "<group>"; };
+		9EF0D5552BED1A2200145A0C /* ScreenRecorderHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenRecorderHelper.swift; sourceTree = "<group>"; };
+		9EF0D5572BED1C6A00145A0C /* ScreenCapture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCapture.swift; sourceTree = "<group>"; };
+		9EF0D5592BED1CB100145A0C /* VideoPlayerWithCursorOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerWithCursorOverlay.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,6 +68,9 @@
 				9EA53F712BE93F4E00D273CC /* Info.plist */,
 				9ED37BBA2BE4FFB2006B5C58 /* RecordKitApp.swift */,
 				9ED37BBC2BE4FFB2006B5C58 /* ContentView.swift */,
+				9EF0D5572BED1C6A00145A0C /* ScreenCapture.swift */,
+				9EF0D5592BED1CB100145A0C /* VideoPlayerWithCursorOverlay.swift */,
+				9EF0D5552BED1A2200145A0C /* ScreenRecorderHelper.swift */,
 				9E79F7672BEA42BD00BDAB55 /* FloatingToolbar.swift */,
 				9E79F7692BEA42F900BDAB55 /* WindowController.swift */,
 				9ED37BBE2BE4FFB3006B5C58 /* Assets.xcassets */,
@@ -151,8 +160,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				9ED37BBD2BE4FFB2006B5C58 /* ContentView.swift in Sources */,
+				9EF0D55A2BED1CB100145A0C /* VideoPlayerWithCursorOverlay.swift in Sources */,
 				9E79F76A2BEA42F900BDAB55 /* WindowController.swift in Sources */,
 				9ED37BBB2BE4FFB2006B5C58 /* RecordKitApp.swift in Sources */,
+				9EF0D5562BED1A2200145A0C /* ScreenRecorderHelper.swift in Sources */,
+				9EF0D5582BED1C6A00145A0C /* ScreenCapture.swift in Sources */,
 				9ED37BCA2BE5001F006B5C58 /* RecordSetup.swift in Sources */,
 				9E79F7682BEA42BD00BDAB55 /* FloatingToolbar.swift in Sources */,
 			);
